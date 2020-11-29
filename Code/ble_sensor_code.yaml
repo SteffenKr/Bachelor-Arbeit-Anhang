@@ -1,0 +1,29 @@
+esphome:
+  name: ble_sensor
+  platform: ESP32
+  board: esp-wrover-kit
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Ble Scanner Fallback Hotspot"
+    password: !secret fallback_password
+
+captive_portal:
+
+esp32_ble_tracker:
+
+text_sensor:
+  - platform: ble_scanner
+    name: "BLE Devices Scanner"
+
+logger:
+
+api:
+  password: !secret api_password
+
+ota:
+  password: !secret ota_password

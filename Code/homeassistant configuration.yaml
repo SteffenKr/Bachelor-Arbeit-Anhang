@@ -1,0 +1,38 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+influxdb:
+  host: a0d7b954-influxdb
+  port: 8086
+  database: !secret influxdb_db
+  username: !secret influxdb_username
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+
+sensor:
+  - platform: template
+    sensors:
+      mb_rssi:
+        friendly_name: "MiBand RSSI"
+        value_template: >
+            {% set rssi = states.sensor.ble_devices_scanner.state | regex_findall_index('\"rssi\":(-\d+)', index=0) %}
+            {% set address = states.sensor.ble_devices_scanner.state | regex_findall_index('\"address\":\"(.+?)\"', index=0) %}
+            {% if address == !secret ble_tag_mac_id %}
+                {{rssi}}
+            {% endif %}
+            
+mqtt:
+  discovery: true
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
